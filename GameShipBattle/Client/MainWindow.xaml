@@ -23,8 +23,8 @@
 
         </Grid>
         <StackPanel Grid.Column="1">
-            <TextBlock Name="tb1" />
-            <TextBlock Name="tb" />
+            <TextBox ToolTip="A-Z" Name="tb1"/>
+            <TextBox Name="tb" ToolTip="1-10" />
             <TextBlock Name="tb3"/>
             <Button Click="Button_Click">Send</Button>
         </StackPanel>

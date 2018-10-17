@@ -41,7 +41,7 @@ namespace Client
                     string msg1 = Encoding.Unicode.GetString(arr, 0, bytes);
                     Dispatcher.Invoke(() =>
                     {
-                        tb1.Text = msg1;
+                        tb3.Text = msg1;
                     });
                 }
             });
@@ -67,8 +67,8 @@ namespace Client
             for (int i = 0; i < 10; i++)
             {
                 TextBlock tb = new TextBlock();
-
                 tb.Text = s.ToString();
+               
                 s++;
                 Grid.SetRow(tb, i);
                 Grid.SetColumn(tb, 10);
@@ -80,7 +80,14 @@ namespace Client
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            if(String.IsNullOrEmpty(tb1.Text)==false&& String.IsNullOrEmpty(tb.Text)==false)
+            {
+                
+                NetworkStream networkStream = client.GetStream();
+                byte[] arr = Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
+                networkStream.Write(arr,0,arr.Length);
+                MessageBox.Show(tb1.Text + " " + tb.Text);
+            }
         }
     }
 }
