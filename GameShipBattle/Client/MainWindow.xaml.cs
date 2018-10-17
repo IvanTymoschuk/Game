@@ -29,8 +29,7 @@ namespace Client
             CreateTable();
             client = new TcpClient();
             client.Connect("127.0.0.1", 1488);
-
-
+           
             Task.Run(() =>
             {
                 NetworkStream networkStream = client.GetStream();
@@ -42,6 +41,7 @@ namespace Client
                     Dispatcher.Invoke(() =>
                     {
                         tb3.Text = msg1;
+                        MessageBox.Show(msg1);
                     });
                 }
             });
@@ -86,7 +86,7 @@ namespace Client
                 NetworkStream networkStream = client.GetStream();
                 byte[] arr = Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
                 networkStream.Write(arr,0,arr.Length);
-                MessageBox.Show(tb1.Text + " " + tb.Text);
+             //  MessageBox.Show(tb1.Text + " " + tb.Text);
             }
         }
     }

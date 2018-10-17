@@ -42,6 +42,8 @@ namespace ServerShip
                     {
                         string message = u.ReadMessage();
                         Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND COORDS: {message}", ConsoleColor.Red);
+                        foreach (var el in Players)
+                            el.Write(message);
                     }
 
                 });
