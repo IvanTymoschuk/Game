@@ -64,18 +64,22 @@ namespace ServerShip
                     while (true)
                     {
                         string message = u.ReadMessage();
-                        Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND COORDS: {message}", ConsoleColor.Red);
+                        Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND COORDS: {message}", ConsoleColor.DarkRed);
                         foreach (var el in Players)
                         {
                             if (el.Tcp.Client.RemoteEndPoint != u.Tcp.Client.RemoteEndPoint)
                             {
-                                el.Write(message+" true");
-                                Print("\t SERVER SEND " + message + " true TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.DarkMagenta);
+                                // message  - coords;
+                                // true - Step;
+                                // false or true - is hit;
+                                el.Write(message+" true false");
+                                Print("\t SERVER SEND " + message + " true false TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.Cyan);
                             }
                             else
                             {
+                                // false - Step;
                                 el.Write("false");
-                                Print("\t SERVER SEND FALSE  TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                                Print("\t SERVER SEND FALSE  TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.DarkCyan);
                             }
                         }
                     }

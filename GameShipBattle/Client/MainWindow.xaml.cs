@@ -21,10 +21,15 @@ namespace Client
     /// </summary>
     public partial class MainWindow : Window
     {
+        
+        // Game vars
+        public string X { get; set; } // X
+        public string Y { get; set; } // Y
+        public bool isHit; // is hit?
+
+        //System vars
         TcpClient client;
-        public string X { get; set; }
-        public string Y { get; set; }
-        public bool Step = false;
+        public bool Step = false; 
         public bool isGameStarted = false;
         public MainWindow()
         {
@@ -65,6 +70,10 @@ namespace Client
                     else
                     {
                         string[] strs = msg1.Split(' ');
+                        //strs[0]  -  Y;
+                        //strs[1]  -  X;
+                        //strs[2]  -  Step;
+                        //strs[3]  -  isHit;
                         if (strs[2] == "true")
                             Step = true;
                         else
@@ -72,6 +81,11 @@ namespace Client
                         
                         Y = strs[0];
                         X = strs[1];
+                        if (strs[3] == "true")
+                            isHit = true;
+                        else
+                           if (strs[3] == "false")
+                            isHit = false;
                     }
 
 
