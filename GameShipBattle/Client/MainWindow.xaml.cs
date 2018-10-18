@@ -31,11 +31,13 @@ namespace Client
         TcpClient client;
         public bool Step = false; 
         public bool isGameStarted = false;
+        public int[,] array2Da;
         public MainWindow()
         {
             InitializeComponent();
             SEND_BTN.IsEnabled = false;
             CreateTable();
+            array2Da = new int[4, 2] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
             client = new TcpClient();
             client.Connect("127.0.0.1", 1488);
             tb3.Text = "Waiting for users";
@@ -143,16 +145,27 @@ namespace Client
             }
 
         }
-
+        private byte [] getByteFromMatrix()
+        {
+           
+            string str_matrix= "#matrix ";
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 2; j++)
+                    str_matrix += array2Da[i, j].ToString() + " ";
+            MessageBox.Show(str_matrix);
+            return Encoding.Unicode.GetBytes(str_matrix);
+            
+        }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             if(String.IsNullOrEmpty(tb1.Text)==false&& String.IsNullOrEmpty(tb.Text)==false)
             {
                 
                 NetworkStream networkStream = client.GetStream();
-                byte[] arr = Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
+                byte[] arr = Encoding.Unicode.GetBytes(tb1.Text + " " + tb.Text);//getByteFromMatrix(); //Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
                 networkStream.Write(arr,0,arr.Length);
-             //  MessageBox.Show(tb1.Text + " " + tb.Text);
+                //MessageBox.Show(tb1.Text + " " + tb.Text);
+
             }
         }
     }

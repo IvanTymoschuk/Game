@@ -13,13 +13,16 @@ namespace ServerShip
 
         public TcpClient Tcp { get; set; }
         public string Name { get; set; }
+        
         public int Prior { get; set; }
 
+        public int[,] field { get; set; }
 
 
         public Player(TcpClient client)
         {
             Tcp = client;
+            field = new int[4, 2];
         }
 
         public string ReadMessage()
@@ -29,7 +32,31 @@ namespace ServerShip
             int bytes = str.Read(arr, 0, 256);
             return Encoding.Unicode.GetString(arr, 0, bytes);
         }
+        public void SetMatrix(string str)
+        {
+            string[] items = str.Split(' ');
+            int a = 1;
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    field[i, j] = Convert.ToInt32(items[a]);
+                        a++;
+                }
+            }
+        }
+        public void PrintMatrix()
+        {
 
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 2; j++)
+                {
+                    Console.Write(field[i,j]+" ");
+                }
+                Console.WriteLine();
+            }
+        }
         public void Write(string mes)
         {
             NetworkStream str = Tcp.GetStream();
