@@ -36,11 +36,21 @@ namespace Client
         {
             InitializeComponent();
             SEND_BTN.IsEnabled = false;
-            CreateTable();
+
+
+
+            //Fill tables
+            CreateTable(UserGrid);
+            CreateTable(OpponentGrid);
+
+
+
             array2Da = new int[10, 10];
             client = new TcpClient();
             client.Connect("127.0.0.1", 1488);
             tb3.Text = "Waiting for users";
+
+
             Task.Run(() =>
             {
                 NetworkStream networkStream = client.GetStream();
@@ -114,24 +124,29 @@ namespace Client
         }
     
         
-        void CreateTable()
+        void CreateTable(Grid grid)
         {
+            //Definitions
             for (int i = 0; i < 11; i++)
             {
-                MainGrid.RowDefinitions.Add(new RowDefinition());
-                MainGrid.ColumnDefinitions.Add(new ColumnDefinition());
+                grid.RowDefinitions.Add(new RowDefinition());
+                grid.ColumnDefinitions.Add(new ColumnDefinition());
 
             }
+
+            //Fill Header Row
             for (int i = 0; i < 10; i++)
             {
                 TextBlock tb = new TextBlock();
                 tb.Text = (i + 1).ToString();
                 Grid.SetRow(tb, 10);
                 Grid.SetColumn(tb, i);
-                MainGrid.Children.Add(tb);
+                grid.Children.Add(tb);
 
             }
-            char s = 'A'; ;
+
+            //Fill Header Column
+            char s = 'A'; 
             for (int i = 0; i < 10; i++)
             {
                 TextBlock tb = new TextBlock();
@@ -140,9 +155,29 @@ namespace Client
                 s++;
                 Grid.SetRow(tb, i);
                 Grid.SetColumn(tb, 10);
-                MainGrid.Children.Add(tb);
+                grid.Children.Add(tb);
 
             }
+
+
+            //fill buttons
+            for (int i = 0; i < 10; i++)
+            {
+
+                for (int j = 0; j < 10; j++)
+                {
+                    Button bt = new Button();
+
+
+                    bt.Name = string.Format($"C{i}{j}");
+                    bt.Content = bt.Name.ToString();
+                    Grid.SetRow(bt, i);
+                    Grid.SetColumn(bt, j);
+                    grid.Children.Add(bt);
+                }
+            }
+        
+
 
         }
         private byte [] getByteFromMatrix()
