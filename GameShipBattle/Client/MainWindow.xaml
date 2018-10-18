@@ -26,7 +26,7 @@
             <TextBox ToolTip="A-Z" Name="tb1"/>
             <TextBox Name="tb" ToolTip="1-10" />
             <TextBlock Name="tb3"/>
-            <Button Click="Button_Click">Send</Button>
+            <Button Name="SEND_BTN" Click="Button_Click">Send</Button>
         </StackPanel>
     </Grid>
 </Window>

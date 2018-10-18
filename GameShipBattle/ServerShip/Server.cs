@@ -12,6 +12,7 @@ namespace ServerShip
     {
         private readonly TcpListener listener;
         public List<Player> Players;
+        public bool isGameStarted = false;
 
         public Server(string ip, int port)
         {
@@ -20,7 +21,7 @@ namespace ServerShip
             Players = new List<Player>();
 
         }
-
+        
         public void ServerStart()
         {
             listener.Start();
@@ -37,15 +38,42 @@ namespace ServerShip
 
                     Players.Add(u);
                     Print(u.Tcp.Client.RemoteEndPoint.ToString() + " Connected..", ConsoleColor.Green);
-
+                    if(Players.Count==2 && isGameStarted==false)
+                    {
+                        isGameStarted = true;
+                        Random rnd = new Random();
+                        int first = rnd.Next(0, 1);
+                        if(first==0)
+                        {
+                            Players[0].Write("true");
+                            Players[1].Write("false");
+                            Print("\t SERVER SEND TRUE  TO " + Players[0].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                            Print("\t SERVER SEND FALSE  TO " + Players[1].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                        }
+                        else
+                        {
+                            Players[1].Write("true");
+                            Players[0].Write("false");
+                            Print("\t SERVER SEND TRUE  TO " + Players[1].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                            Print("\t SERVER SEND FALSE  TO " + Players[0].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                        }
+                    }
                     while (true)
                     {
                         string message = u.ReadMessage();
                         Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND COORDS: {message}", ConsoleColor.Red);
                         foreach (var el in Players)
                         {
-                            el.Write(message);
-                            Print("\t SERVER SEND " + message + " TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.DarkMagenta);
+                            if (el.Tcp.Client.RemoteEndPoint != u.Tcp.Client.RemoteEndPoint)
+                            {
+                                el.Write(message+" true");
+                                Print("\t SERVER SEND " + message + " true TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.DarkMagenta);
+                            }
+                            else
+                            {
+                                el.Write("false");
+                                Print("\t SERVER SEND FALSE  TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                            }
                         }
                     }
 

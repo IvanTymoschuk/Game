@@ -22,14 +22,18 @@ namespace Client
     public partial class MainWindow : Window
     {
         TcpClient client;
+        public string X { get; set; }
+        public string Y { get; set; }
+        public bool Step = false;
+        public bool isGameStarted = false;
         public MainWindow()
         {
             InitializeComponent();
-            
+            SEND_BTN.IsEnabled = false;
             CreateTable();
             client = new TcpClient();
             client.Connect("127.0.0.1", 1488);
-           
+            tb3.Text = "Waiting for users";
             Task.Run(() =>
             {
                 NetworkStream networkStream = client.GetStream();
@@ -38,14 +42,62 @@ namespace Client
                     byte[] arr = new byte[256];
                     int bytes = networkStream.Read(arr, 0, 256);
                     string msg1 = Encoding.Unicode.GetString(arr, 0, bytes);
+                    //MessageBox.Show(msg1);
+                    if (msg1 == "true")
+                    {
+                        Step = true;
+                        if (isGameStarted == false)
+                        {
+                            isGameStarted = true;
+                            MessageBox.Show("GAME STARTED!!!!");
+                        }
+                    }
+                    else
+                    if (msg1 == "false")
+                    {
+                        Step = false;
+                        if (isGameStarted == false)
+                        {
+                            isGameStarted = true;
+                            MessageBox.Show("GAME STARTED!!!!");
+                        }
+                    }
+                    else
+                    {
+                        string[] strs = msg1.Split(' ');
+                        if (strs[2] == "true")
+                            Step = true;
+                        else
+                            Step = false;
+                        
+                        Y = strs[0];
+                        X = strs[1];
+                    }
+
+
+                    if (Step == true)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            SEND_BTN.IsEnabled = true;
+                        });
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            SEND_BTN.IsEnabled = false;
+                        });
+                    }
                     Dispatcher.Invoke(() =>
                     {
-                        tb3.Text = msg1;
-                        MessageBox.Show(msg1);
+                        tb3.Text = Y+X;
                     });
                 }
             });
         }
+    
+        
         void CreateTable()
         {
             for (int i = 0; i < 11; i++)
