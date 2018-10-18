@@ -195,13 +195,81 @@ namespace Client
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if(String.IsNullOrEmpty(tb1.Text)==false&& String.IsNullOrEmpty(tb.Text)==false)
+            try
             {
-                
-                NetworkStream networkStream = client.GetStream();
-                byte[] arr = Encoding.Unicode.GetBytes(tb1.Text + " " + tb.Text);//getByteFromMatrix(); //Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
-                networkStream.Write(arr,0,arr.Length);
+                string Y = null;
+                string X = null;
+
+                if (btn != null)
+                {
+
+                    string btn_name = btn.Name.Remove(0, 1);
+                    int id = Convert.ToInt32(btn_name);
+                    #region
+                    if (id < 10)
+                    {
+                        Y = "A";
+                        X = id.ToString();
+                    }
+                    if (id > 9 && id < 21)
+                    {
+                        Y = "B";
+                        X = (id - 10).ToString();
+                    }
+                    if (id > 19 && id < 31)
+                    {
+                        Y = "C";
+                        X = (id - 20).ToString();
+                    }
+                    if (id > 29 && id < 41)
+                    {
+                        Y = "D";
+                        X = (id - 30).ToString();
+                    }
+                    if (id > 39 && id < 51)
+                    {
+                        Y = "E";
+                        X = (id - 40).ToString();
+                    }
+                    if (id > 49 && id < 61)
+                    {
+                        Y = "F";
+                        X = (id - 50).ToString();
+                    }
+                    if (id > 59 && id < 71)
+                    {
+                        Y = "G";
+                        X = (id - 60).ToString();
+                    }
+                    if (id > 69 && id < 81)
+                    {
+                        Y = "H";
+                        X = (id - 70).ToString();
+                    }
+                    if (id > 79 && id < 91)
+                    {
+                        Y = "I";
+                        X = (id - 80).ToString();
+                    }
+                    if (id > 89 && id < 101)
+                    {
+                        Y = "J";
+                        X = (id - 90).ToString();
+                    }
+                    #endregion
+                    // MessageBox.Show(Y + " " + X);
+                    NetworkStream networkStream = client.GetStream();
+                    byte[] arr = Encoding.Unicode.GetBytes(Y + " " + X);//getByteFromMatrix(); //Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
+                    networkStream.Write(arr, 0, arr.Length);
+                    btn.IsEnabled = false;
+                }
+                //NetworkStream networkStream = client.GetStream();
+                //byte[] arr = Encoding.Unicode.GetBytes(tb1.Text + " " + tb.Text);//getByteFromMatrix(); //Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
+                //networkStream.Write(arr, 0, arr.Length);
                 //MessageBox.Show(tb1.Text + " " + tb.Text);
+            }
+            catch(Exception)
+            {
 
             }
         }
