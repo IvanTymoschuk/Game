@@ -174,10 +174,12 @@ namespace Client
                     Grid.SetRow(bt, i);
                     Grid.SetColumn(bt, j);
                     grid.Children.Add(bt);
+                    bt.Click += Attack_click;
+                   // bt.IsEnabled = false;
                 }
             }
         
-
+           
 
         }
         private byte [] getByteFromMatrix()
@@ -202,6 +204,27 @@ namespace Client
                 //MessageBox.Show(tb1.Text + " " + tb.Text);
 
             }
+        }
+        Button btn = null;
+        private void Attack_click(object sender, RoutedEventArgs e)
+        {
+            if (btn != null)
+            {
+                Thickness th1 = new Thickness();
+                th1.Right = 0;
+                th1.Left = 0;
+                th1.Top = 0;
+                th1.Bottom = 0;
+                btn.BorderThickness = th1;
+            }
+            Thickness th = new Thickness();
+            th.Right = 6;
+            th.Left = 6;
+            th.Top = 6;
+            th.Bottom = 6;
+            (sender as Button).BorderThickness = th;
+            btn= (sender as Button);
+
         }
     }
 }
