@@ -36,9 +36,9 @@ namespace ServerShip
         {
             string[] items = str.Split(' ');
             int a = 1;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 10; i++)
             {
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     field[i, j] = Convert.ToInt32(items[a]);
                         a++;
@@ -48,9 +48,9 @@ namespace ServerShip
         public void PrintMatrix()
         {
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 10; i++)
             {
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     Console.Write(field[i,j]+" ");
                 }

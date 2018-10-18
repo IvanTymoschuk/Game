@@ -37,7 +37,7 @@ namespace Client
             InitializeComponent();
             SEND_BTN.IsEnabled = false;
             CreateTable();
-            array2Da = new int[4, 2] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+            array2Da = new int[10, 10];
             client = new TcpClient();
             client.Connect("127.0.0.1", 1488);
             tb3.Text = "Waiting for users";
@@ -149,8 +149,8 @@ namespace Client
         {
            
             string str_matrix= "#matrix ";
-            for (int i = 0; i < 4; i++)
-                for (int j = 0; j < 2; j++)
+            for (int i = 0; i < 10; i++)
+                for (int j = 0; j < 10; j++)
                     str_matrix += array2Da[i, j].ToString() + " ";
             MessageBox.Show(str_matrix);
             return Encoding.Unicode.GetBytes(str_matrix);
