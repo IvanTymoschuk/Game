@@ -38,6 +38,9 @@ namespace ServerShip
 
                     Players.Add(u);
                     Print(u.Tcp.Client.RemoteEndPoint.ToString() + " Connected..", ConsoleColor.Green);
+
+                    // start game 
+
                     if(Players.Count==2 && isGameStarted==false)
                     {
                         isGameStarted = true;
