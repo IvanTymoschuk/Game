@@ -79,14 +79,15 @@ namespace ServerShip
                                 {
                                     // message  - coords;
                                     // true - Step;
-                                    // false or true - is hit;
-                                    el.Write(message + " true false");
-                                    Print("\t SERVER SEND " + message + " true false TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.Cyan);
+                                    // true or false - isHit = true/false;
+                                    el.Write(message + " true true");
+                                    Print("\t SERVER SEND " + message + " true true TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.Cyan);
                                 }
                                 else
                                 {
                                     // false - Step;
-                                    el.Write("false");
+                                    // true or false - isHit = true/false;
+                                    el.Write("false true");
                                     Print("\t SERVER SEND FALSE  TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.DarkCyan);
                                 }
                             }

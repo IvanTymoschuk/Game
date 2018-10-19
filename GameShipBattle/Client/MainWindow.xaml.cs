@@ -76,8 +76,20 @@ namespace Client
                         }
                     }
                     else
-                    if (msg1 == "false")
+                    if (msg1 == "false false" || msg1 == "false true" || msg1=="false")
                     {
+                        if (btn != null)
+                        {
+                            if (msg1 == "false true")
+                            {
+                                Hit(true);
+                            }
+                            else
+                            if (msg1 == "false false")
+                            {
+                                Hit(false);
+                            }
+                        }
                         Step = false;
                         if (isGameStarted == false)
                         {
@@ -99,11 +111,7 @@ namespace Client
                         
                         Y = strs[0];
                         X = strs[1];
-                        if (strs[3] == "true")
-                            isHit = true;
-                        else
-                           if (strs[3] == "false")
-                            isHit = false;
+                        Hit(strs[3]);
                     }
 
 
@@ -129,7 +137,44 @@ namespace Client
             });
         }
     
-        
+        void Hit(bool is_hit)
+        {
+            if (btn == null)
+                return;
+            if(is_hit==true)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    btn.Content = "X";
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    btn.Content = "0";
+                });
+            }
+        }
+        void Hit(string is_hit)
+        {
+            IEnumerable<Button> collection = null;
+            Dispatcher.Invoke(() =>
+            {
+                 collection = UserGrid.Children.OfType<Button>();
+           
+            foreach (var el in collection)
+                if (el.Name == Y + X)
+                {
+                    MessageBox.Show("EL");
+                    Dispatcher.Invoke(() =>
+                    {
+                        el.IsEnabled = false;
+                        el.Content = ".";
+                    });
+                }
+            });
+        }
         void CreateTable(Grid grid)
         {
             //Definitions
@@ -213,8 +258,6 @@ namespace Client
 
             try
             {
-                string Y = null;
-                string X = null;
 
                 if (btn != null)
                 {
