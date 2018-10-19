@@ -36,20 +36,26 @@ namespace Client
         {
             InitializeComponent();
             SEND_BTN.IsEnabled = false;
-
-
-
+            UserGrid.IsEnabled = false;
+   
             //Fill tables
             CreateTable(UserGrid);
             CreateTable(OpponentGrid);
 
 
-
+           
             array2Da = new int[10, 10];
-            client = new TcpClient();
-            client.Connect("127.0.0.1", 1488);
-            tb3.Text = "Waiting for users";
-
+            try
+            {
+                client = new TcpClient();
+                client.Connect("127.0.0.1", 1488);
+                tb3.Text = "Waiting for users";
+            }
+            catch(Exception exp)
+            {
+                MessageBox.Show("Server is disabled!!!");
+                this.Close();
+            }
 
             Task.Run(() =>
             {
@@ -161,6 +167,7 @@ namespace Client
 
 
             //fill buttons
+            char btn_fname = 'A';
             for (int i = 0; i < 10; i++)
             {
 
@@ -169,7 +176,7 @@ namespace Client
                     Button bt = new Button();
 
 
-                    bt.Name = string.Format($"C{i}{j}");
+                    bt.Name = string.Format($"{btn_fname}{j}");
                     bt.Content = bt.Name.ToString();
                     Grid.SetRow(bt, i);
                     Grid.SetColumn(bt, j);
@@ -177,6 +184,7 @@ namespace Client
                     bt.Click += Attack_click;
                    // bt.IsEnabled = false;
                 }
+                btn_fname++;
             }
         
            
@@ -195,6 +203,14 @@ namespace Client
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+
+            //
+            //
+            // ALL BUTTONS FROM GRID
+            //  var el = UserGrid.Children.OfType<Button>();
+            //
+            //
+
             try
             {
                 string Y = null;
@@ -202,64 +218,69 @@ namespace Client
 
                 if (btn != null)
                 {
-
-                    string btn_name = btn.Name.Remove(0, 1);
-                    int id = Convert.ToInt32(btn_name);
+                    if(btn.IsEnabled==false)
+                    {
+                        MessageBox.Show("You have already gone here ");
+                        return;
+                    }
                     #region
-                    if (id < 10)
-                    {
-                        Y = "A";
-                        X = id.ToString();
-                    }
-                    if (id > 9 && id < 21)
-                    {
-                        Y = "B";
-                        X = (id - 10).ToString();
-                    }
-                    if (id > 19 && id < 31)
-                    {
-                        Y = "C";
-                        X = (id - 20).ToString();
-                    }
-                    if (id > 29 && id < 41)
-                    {
-                        Y = "D";
-                        X = (id - 30).ToString();
-                    }
-                    if (id > 39 && id < 51)
-                    {
-                        Y = "E";
-                        X = (id - 40).ToString();
-                    }
-                    if (id > 49 && id < 61)
-                    {
-                        Y = "F";
-                        X = (id - 50).ToString();
-                    }
-                    if (id > 59 && id < 71)
-                    {
-                        Y = "G";
-                        X = (id - 60).ToString();
-                    }
-                    if (id > 69 && id < 81)
-                    {
-                        Y = "H";
-                        X = (id - 70).ToString();
-                    }
-                    if (id > 79 && id < 91)
-                    {
-                        Y = "I";
-                        X = (id - 80).ToString();
-                    }
-                    if (id > 89 && id < 101)
-                    {
-                        Y = "J";
-                        X = (id - 90).ToString();
-                    }
+                    //string btn_name = btn.Name.Remove(0, 1);
+                    //int id = Convert.ToInt32(btn_name);
+                    //#region
+                    //if (id < 10)
+                    //{
+                    //    Y = "A";
+                    //    X = id.ToString();
+                    //}
+                    //if (id > 9 && id < 21)
+                    //{
+                    //    Y = "B";
+                    //    X = (id - 10).ToString();
+                    //}
+                    //if (id > 19 && id < 31)
+                    //{
+                    //    Y = "C";
+                    //    X = (id - 20).ToString();
+                    //}
+                    //if (id > 29 && id < 41)
+                    //{
+                    //    Y = "D";
+                    //    X = (id - 30).ToString();
+                    //}
+                    //if (id > 39 && id < 51)
+                    //{
+                    //    Y = "E";
+                    //    X = (id - 40).ToString();
+                    //}
+                    //if (id > 49 && id < 61)
+                    //{
+                    //    Y = "F";
+                    //    X = (id - 50).ToString();
+                    //}
+                    //if (id > 59 && id < 71)
+                    //{
+                    //    Y = "G";
+                    //    X = (id - 60).ToString();
+                    //}
+                    //if (id > 69 && id < 81)
+                    //{
+                    //    Y = "H";
+                    //    X = (id - 70).ToString();
+                    //}
+                    //if (id > 79 && id < 91)
+                    //{
+                    //    Y = "I";
+                    //    X = (id - 80).ToString();
+                    //}
+                    //if (id > 89 && id < 101)
+                    //{
+                    //    Y = "J";
+                    //    X = (id - 90).ToString();
+                    //}
                     #endregion
                     // MessageBox.Show(Y + " " + X);
                     NetworkStream networkStream = client.GetStream();
-                    byte[] arr = Encoding.Unicode.GetBytes(Y + " " + X);//getByteFromMatrix(); //Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
+                    byte[] arr = Encoding.Unicode.GetBytes(btn.Name[0] + " " + btn.Name[1]);//getByteFromMatrix(); //Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
                     networkStream.Write(arr, 0, arr.Length);
                     btn.IsEnabled = false;
                 }
@@ -270,7 +291,7 @@ namespace Client
             }
             catch(Exception)
             {
-
+                MessageBox.Show("You lost connect to server!!");
             }
         }
         Button btn = null;
