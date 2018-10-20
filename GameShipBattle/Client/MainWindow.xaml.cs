@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net.Sockets;
+using System.Diagnostics;
 
 namespace Client
 {
@@ -44,8 +45,10 @@ namespace Client
             CreateTable(UserGrid);
             CreateTable(OpponentGrid);
 
+            UserGridBtn();
+
             lbShips.Items.Add(new Ship(){Name ="Large",Length=4});
-           
+            
             
 
             array2Da = new int[10, 10];
@@ -70,7 +73,24 @@ namespace Client
                     int bytes = networkStream.Read(arr, 0, 256);
                     string msg1 = Encoding.Unicode.GetString(arr, 0, bytes);
                     //MessageBox.Show(msg1);
-
+                    if (msg1 == "WIN")
+                    {
+                        MessageBox.Show("You win");
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Process.Start("Client.exe");
+                            this.Close();
+                        });
+                    }
+                    if (msg1 == "LOSE")
+                    {
+                        MessageBox.Show("You LOSE");
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            Process.Start("Client.exe");
+                            this.Close();
+                        });
+                    }
                     if (msg1 == "true")
                     {
                         Step = true;

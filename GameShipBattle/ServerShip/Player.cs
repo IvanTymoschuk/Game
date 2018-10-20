@@ -23,9 +23,9 @@ namespace ServerShip
         public Player(TcpClient client)
         {
             Tcp = client;
-            field = new int[4, 2];
+            field = new int[10, 10] { {0,1,1,0,0,0,0,0,0,1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }, { 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 }};
             count_hit = 0;
-            count_xp = 20;
+            count_xp = 3;
         }
 
         public string ReadMessage()
