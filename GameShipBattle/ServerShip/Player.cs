@@ -53,7 +53,7 @@ namespace ServerShip
             if (field[y, x] == 1)
             {
                 field[y, x] = 0;
-                count_hit++;
+                count_xp--;
                 return true;
             }
             else
