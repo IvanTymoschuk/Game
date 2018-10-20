@@ -166,7 +166,7 @@ namespace Client
             foreach (var el in collection)
                 if (el.Name == Y + X)
                 {
-                    MessageBox.Show("EL");
+                    //MessageBox.Show("EL");
                     Dispatcher.Invoke(() =>
                     {
                         el.IsEnabled = false;

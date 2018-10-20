@@ -14,6 +14,9 @@ namespace ServerShip
         public List<Player> Players;
         public bool isGameStarted = false;
 
+        int X;
+        int Y;
+
         public Server(string ip, int port)
         {
             // MY server location
@@ -64,6 +67,7 @@ namespace ServerShip
                     while (true)
                     {
                         string message = u.ReadMessage();
+                        ParseCoords(message);
                         if (message.Contains("#matrix") == true)
                         {
                             u.SetMatrix(message);
@@ -97,7 +101,42 @@ namespace ServerShip
                 });
             }
         }
+        private void ParseCoords(string coords)
+        {
+            string[] coord = coords.Split(' ');
+            if(coord[0]!=null)
+            {
+                if (coord[0] == "A")
+                    Y = 0;
+                if (coord[0] == "B")
+                    Y = 1;
+                if (coord[0] == "C")
+                    Y = 2;
+                if (coord[0] == "D")
+                    Y = 3;
+                if (coord[0] == "E")
+                    Y = 4;
+                if (coord[0] == "F")
+                    Y = 5;
+                if (coord[0] == "G")
+                    Y = 6;
+                if (coord[0] == "H")
+                    Y = 7;
+                if (coord[0] == "I")
+                    Y = 8;
+                if (coord[0] == "J")
+                    Y = 9;
+                try
+                {
+                    X = Convert.ToInt32(coord[1]);
+                }
+                catch(Exception)
+                {
 
+                }
+                Console.WriteLine("\t SERVER PARSE " + coords + " TO Y:" + Y + " X:" + X);
+            }
+        }
         private void Print(string msg, ConsoleColor cc = ConsoleColor.White)
         {
             Console.ForegroundColor = cc;
