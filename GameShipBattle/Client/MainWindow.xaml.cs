@@ -171,6 +171,7 @@ namespace Client
                     Dispatcher.Invoke(() =>
                     {
                         el.IsEnabled = false;
+                        el.FontSize = 30;
                         el.Content = ".";
                     });
                 }
