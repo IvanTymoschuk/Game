@@ -44,7 +44,9 @@ namespace Client
             CreateTable(UserGrid);
             CreateTable(OpponentGrid);
 
-            UserGridBtn();
+            lbShips.Items.Add(new Ship(){Name ="Large",Length=4});
+           
+            
 
             array2Da = new int[10, 10];
             try
@@ -381,6 +383,23 @@ namespace Client
             (sender as Button).BorderThickness = th;
             btn= (sender as Button);
 
+        }
+
+
+        private void BtnPush_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (lbShips.Items == null)
+            {
+                
+            }
+        }
+
+
+      
+
+        private void lbShips_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
         }
     }
 }
