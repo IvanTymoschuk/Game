@@ -36,14 +36,16 @@ namespace Client
         {
             InitializeComponent();
             SEND_BTN.IsEnabled = false;
-            UserGrid.IsEnabled = false;
-   
+            UserGrid.IsEnabled = true;
+
+     
+           
             //Fill tables
             CreateTable(UserGrid);
             CreateTable(OpponentGrid);
 
+            UserGridBtn();
 
-           
             array2Da = new int[10, 10];
             try
             {
@@ -176,6 +178,26 @@ namespace Client
                     });
                 }
             });
+        }
+        //IEnumerable<Button> collection = null;
+        void UserGridBtn()
+        {
+            IEnumerable<Button> collection = null;
+            Dispatcher.Invoke(() =>
+            {
+                collection = UserGrid.Children.OfType<Button>();
+
+                foreach (var el in collection)
+                    el.Click += UserBtn;
+            });
+        }
+        
+        Button Yourbtn = null;
+        private void UserBtn(object sender, RoutedEventArgs e)
+        {
+            Yourbtn= sender as Button;
+            MessageBox.Show("You click on button, name: " + Yourbtn.Name);
+
         }
         void CreateTable(Grid grid)
         {
