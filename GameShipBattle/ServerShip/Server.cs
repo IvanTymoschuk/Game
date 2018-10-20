@@ -67,7 +67,7 @@ namespace ServerShip
                     while (true)
                     {
                         string message = u.ReadMessage();
-                        ParseCoords(message);
+                    
                         if (message.Contains("#matrix") == true)
                         {
                             u.SetMatrix(message);
@@ -77,6 +77,7 @@ namespace ServerShip
                         else
                         {
                             Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND COORDS: {message}", ConsoleColor.DarkRed);
+                            ParseCoords(message);
                             foreach (var el in Players)
                             {
                                 if (el.Tcp.Client.RemoteEndPoint != u.Tcp.Client.RemoteEndPoint)

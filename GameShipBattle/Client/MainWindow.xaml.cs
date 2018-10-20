@@ -66,6 +66,7 @@ namespace Client
                     int bytes = networkStream.Read(arr, 0, 256);
                     string msg1 = Encoding.Unicode.GetString(arr, 0, bytes);
                     //MessageBox.Show(msg1);
+
                     if (msg1 == "true")
                     {
                         Step = true;
