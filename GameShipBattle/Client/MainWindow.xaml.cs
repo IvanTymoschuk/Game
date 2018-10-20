@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net.Sockets;
+using System.Collections.ObjectModel;
 
 namespace Client
 {
@@ -32,6 +33,7 @@ namespace Client
         public bool Step = false; 
         public bool isGameStarted = false;
         public int[,] array2Da;
+        ObservableCollection<Ship> ships;
         public MainWindow()
         {
             InitializeComponent();
@@ -43,10 +45,17 @@ namespace Client
             //Fill tables
             CreateTable(UserGrid);
             CreateTable(OpponentGrid);
+            UserGridBtn();
 
-            lbShips.Items.Add(new Ship(){Name ="Large",Length=4});
-           
-            
+
+            ships = new ObservableCollection<Ship>();
+
+            ships.Add(new Ship(){Name ="Large",Length=4});
+            ships.Add(new Ship() { Name = "Small", Length = 1 });
+            ships.Add(new Ship() { Name = "Middle", Length = 2 });
+
+            lbShips.ItemsSource = ships;
+
 
             array2Da = new int[10, 10];
             try
@@ -182,14 +191,15 @@ namespace Client
             });
         }
         //IEnumerable<Button> collection = null;
+        IEnumerable<Button> collectionYourButtons = null;
         void UserGridBtn()
         {
-            IEnumerable<Button> collection = null;
+            
             Dispatcher.Invoke(() =>
             {
-                collection = UserGrid.Children.OfType<Button>();
+                collectionYourButtons = UserGrid.Children.OfType<Button>();
 
-                foreach (var el in collection)
+                foreach (var el in collectionYourButtons)
                     el.Click += UserBtn;
             });
         }
@@ -198,9 +208,31 @@ namespace Client
         private void UserBtn(object sender, RoutedEventArgs e)
         {
             Yourbtn= sender as Button;
-            MessageBox.Show("You click on button, name: " + Yourbtn.Name);
+
+            if (lbShips.SelectedItem == null)
+                return;
+            Ship currentShip = lbShips.SelectedItem as Ship;
+
+            int currentPos = collectionYourButtons.ToList().IndexOf(Yourbtn);
+           
+            if (int.Parse(Yourbtn.Name[1].ToString()) + currentShip.Length <10)
+            {
+                Yourbtn.Content = "☻";
+                for (int j = 0; j < currentShip.Length; j++)
+                    collectionYourButtons.ToList()[collectionYourButtons.ToList().IndexOf(Yourbtn) + j ].Content =
+                        "☻";
+
+                ships.Remove(lbShips.SelectedItem as Ship);
+            }
+            else
+            {
+                lblInfo.Content = "Ship is too big.Here not enough space";
+            }
 
         }
+
+
+
         void CreateTable(Grid grid)
         {
             //Definitions
@@ -395,11 +427,15 @@ namespace Client
         }
 
 
-      
+
 
         private void lbShips_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+           
+
+
+            }
+                
+            }
         }
-    }
-}
+    

@@ -29,7 +29,19 @@
         
         
         <Label FontSize="30">Ships</Label>
-        <ListBox Grid.Row="1" Name="lbShips" SelectionChanged="lbShips_SelectionChanged"></ListBox>
+        <ListBox Grid.Row="1" Name="lbShips" SelectionChanged="lbShips_SelectionChanged">
+            
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="5">
+                            
+                            <TextBlock FontSize="16" Text="{Binding Path=Name}" HorizontalAlignment="Center" />
+                            <TextBlock FontSize="16" Text="{Binding Path=Length}" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+           
+        </ListBox>
         <Button Grid.Row="2" Height="50" VerticalAlignment="Top" Name="btnPush" Click="BtnPush_OnClick">Push</Button>
         
         
