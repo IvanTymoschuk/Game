@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -32,74 +33,100 @@ namespace ServerShip
 
             while (true)
             {
-                TcpClient client = listener.AcceptTcpClient();
 
-
-                Task.Run(() =>
+                if (isGameStarted==true)
                 {
-                    Player u = new Player(client);
+                    listener.Stop();
+                }
+                else
+                {
+                    TcpClient client = listener.AcceptTcpClient();
 
-                    Players.Add(u);
-                    Print(u.Tcp.Client.RemoteEndPoint.ToString() + " Connected..", ConsoleColor.Green);
+                    Task.Run(() =>
+                    {
+                        Player u = new Player(client);
+                        Players.Add(u);
+                        Print(u.Tcp.Client.RemoteEndPoint.ToString() + " Connected..", ConsoleColor.Green);
 
                     // start game 
 
-                    if(Players.Count==2 && isGameStarted==false)
-                    {
-                        isGameStarted = true;
-                        Random rnd = new Random();
-                        int first = rnd.Next(0, 1);
-                        if(first==0)
+                    if (Players.Count == 2 && isGameStarted == false)
                         {
-                            Players[0].Write("true");
-                            Players[1].Write("false");
-                            Print("\t SERVER SEND TRUE  TO " + Players[0].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
-                            Print("\t SERVER SEND FALSE  TO " + Players[1].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
-                        }
-                        else
-                        {
-                            Players[1].Write("true");
-                            Players[0].Write("false");
-                            Print("\t SERVER SEND TRUE  TO " + Players[1].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
-                            Print("\t SERVER SEND FALSE  TO " + Players[0].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
-                        }
-                    }
-                    while (true)
-                    {
-                        string message = u.ReadMessage();
-                    
-                        if (message.Contains("#matrix") == true)
-                        {
-                            u.SetMatrix(message);
-                            Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND MATRIX", ConsoleColor.DarkYellow);
-                            u.PrintMatrix();
-                        }
-                        else
-                        {
-                            Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND COORDS: {message}", ConsoleColor.DarkRed);
-                            ParseCoords(message);
-                            foreach (var el in Players)
+                            isGameStarted = true;
+                            Random rnd = new Random();
+                            int first = rnd.Next(0, 1);
+                            if (first == 0)
                             {
-                                if (el.Tcp.Client.RemoteEndPoint != u.Tcp.Client.RemoteEndPoint)
+                                Players[0].Write("true");
+                                Players[1].Write("false");
+                                Print("\t SERVER SEND TRUE  TO " + Players[0].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                                Print("\t SERVER SEND FALSE  TO " + Players[1].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                            }
+                            else
+                            {
+                                Players[1].Write("true");
+                                Players[0].Write("false");
+                                Print("\t SERVER SEND TRUE  TO " + Players[1].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                                Print("\t SERVER SEND FALSE  TO " + Players[0].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
+                            }
+                        }
+                        while (true)
+                        {
+                            string message = u.ReadMessage();
+
+                            if (message.Contains("#matrix") == true)
+                            {
+                                u.SetMatrix(message);
+                                Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND MATRIX", ConsoleColor.DarkYellow);
+                                u.PrintMatrix();
+                            }
+                            else
+                            {
+                                Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND COORDS: {message}", ConsoleColor.DarkRed);
+                                ParseCoords(message);
+                                bool ishit = false;
+                                foreach (var el in Players)
+                                    if (el.Tcp.Client.RemoteEndPoint != u.Tcp.Client.RemoteEndPoint)
+                                    {
+                                        ishit = el.isHit(Y, X);
+                                        Print("\t " + el.Tcp.Client.RemoteEndPoint.ToString() + " has " + el.count_xp + " xp");
+                                        if (el.isLose())
+                                        {
+                                            Print("\t " + el.Tcp.Client.RemoteEndPoint.ToString() + " lose");
+                                            el.Write("LOSE");
+                                            Print("\t " + u.Tcp.Client.RemoteEndPoint.ToString() + " win");
+                                            u.Write("WIN");
+                                            Players.Clear();
+                                            Console.Clear();
+                                            isGameStarted = false;
+
+                                        }
+
+                                    }
+
+                                foreach (var el in Players)
                                 {
+                                    if (el.Tcp.Client.RemoteEndPoint != u.Tcp.Client.RemoteEndPoint)
+                                    {
                                     // message  - coords;
                                     // true - Step;
                                     // true or false - isHit = true/false;
-                                    el.Write(message + " true true");
-                                    Print("\t SERVER SEND " + message + " true true TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.Cyan);
-                                }
-                                else
-                                {
+                                    el.Write(message + " true " + ishit.ToString().ToLower());
+                                        Print("\t SERVER SEND " + message + " true " + ishit + " TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.Cyan);
+                                    }
+                                    else
+                                    {
                                     // false - Step;
                                     // true or false - isHit = true/false;
-                                    el.Write("false true");
-                                    Print("\t SERVER SEND FALSE  TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.DarkCyan);
+                                    el.Write("false " + ishit.ToString().ToLower());
+                                        Print("\t SERVER SEND FALSE " + ishit.ToString() + " TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.DarkCyan);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                });
+                    });
+                }
             }
         }
         private void ParseCoords(string coords)
