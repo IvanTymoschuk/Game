@@ -12,8 +12,8 @@ namespace ServerShip
     public class Server
     {
         private readonly TcpListener listener;
-        public List<Player> Players;
-        public bool isGameStarted = false;
+        public List<Player> users;
+        
 
         int X;
         int Y;
@@ -22,10 +22,10 @@ namespace ServerShip
         {
             // MY server location
             listener = new TcpListener(IPAddress.Parse(ip), port);
-            Players = new List<Player>();
+            users = new List<Player>();
 
         }
-        
+
         public void ServerStart()
         {
             listener.Start();
@@ -34,98 +34,79 @@ namespace ServerShip
             while (true)
             {
 
-                if (isGameStarted==true)
-                {
-                    listener.Stop();
-                }
-                else
-                {
-                    TcpClient client = listener.AcceptTcpClient();
 
+                TcpClient client = listener.AcceptTcpClient();
+                Player u = new Player(client);
+                users.Add(u);
+                Print(u.Tcp.Client.RemoteEndPoint.ToString() + " Connected..", ConsoleColor.Green);
+                if (users.Count == 2)
+                {
                     Task.Run(() =>
                     {
-                        Player u = new Player(client);
-                        Players.Add(u);
-                        Print(u.Tcp.Client.RemoteEndPoint.ToString() + " Connected..", ConsoleColor.Green);
+                        
+                        List<Player> Players = new List<Player>();
+                        foreach (Player el in users)
+                            Players.Add(el);
 
-                    // start game 
+                        Player p=null;
 
-                    if (Players.Count == 2 && isGameStarted == false)
+                        users.Clear();
+
+                        Random rnd = new Random();
+                        int first = rnd.Next(0, 0);
+
+                        if (first == 0)
                         {
-                            isGameStarted = true;
-                            Random rnd = new Random();
-                            int first = rnd.Next(0, 1);
-                            if (first == 0)
-                            {
-                                Players[0].Write("true");
-                                Players[1].Write("false");
-                                Print("\t SERVER SEND TRUE  TO " + Players[0].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
-                                Print("\t SERVER SEND FALSE  TO " + Players[1].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
-                            }
-                            else
-                            {
-                                Players[1].Write("true");
-                                Players[0].Write("false");
-                                Print("\t SERVER SEND TRUE  TO " + Players[1].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
-                                Print("\t SERVER SEND FALSE  TO " + Players[0].Tcp.Client.RemoteEndPoint, ConsoleColor.Magenta);
-                            }
+                            Players[0].Write("true");
+                            Players[1].Write("false");
+                            p = Players[0];
                         }
+                        else
+                        {
+                            Players[1].Write("true");
+                            Players[0].Write("false");
+                            p = Players[1];
+                        }
+
+                        string message = null;
                         while (true)
                         {
-                            string message = u.ReadMessage();
+
+                            message = p.ReadMessage();
 
                             if (message.Contains("#matrix") == true)
                             {
-                                u.SetMatrix(message);
-                                Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND MATRIX", ConsoleColor.DarkYellow);
-                                u.PrintMatrix();
+                                p.SetMatrix(message);
+                                p.PrintMatrix();
                             }
                             else
                             {
-                                Print($"{u.Tcp.Client.RemoteEndPoint.ToString()} SEND COORDS: {message}", ConsoleColor.DarkRed);
                                 ParseCoords(message);
                                 bool ishit = false;
-                                foreach (var el in Players)
-                                    if (el.Tcp.Client.RemoteEndPoint != u.Tcp.Client.RemoteEndPoint)
-                                    {
-                                        ishit = el.isHit(Y, X);
-                                        Print("\t " + el.Tcp.Client.RemoteEndPoint.ToString() + " has " + el.count_xp + " xp");
-                                        if (el.isLose())
-                                        {
-                                            Print("\t " + el.Tcp.Client.RemoteEndPoint.ToString() + " lose");
-                                            el.Write("LOSE");
-                                            Print("\t " + u.Tcp.Client.RemoteEndPoint.ToString() + " win");
-                                            u.Write("WIN");
-                                            Players.Clear();
-                                            Console.Clear();
-                                            isGameStarted = false;
-
-                                        }
-
-                                    }
-
+                                Player temp_player=null;
                                 foreach (var el in Players)
                                 {
-                                    if (el.Tcp.Client.RemoteEndPoint != u.Tcp.Client.RemoteEndPoint)
+
+                                    if (el.Tcp.Client.RemoteEndPoint != p.Tcp.Client.RemoteEndPoint)
                                     {
-                                    // message  - coords;
-                                    // true - Step;
-                                    // true or false - isHit = true/false;
-                                    el.Write(message + " true " + ishit.ToString().ToLower());
-                                        Print("\t SERVER SEND " + message + " true " + ishit + " TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.Cyan);
-                                    }
-                                    else
-                                    {
-                                    // false - Step;
-                                    // true or false - isHit = true/false;
-                                    el.Write("false " + ishit.ToString().ToLower());
-                                        Print("\t SERVER SEND FALSE " + ishit.ToString() + " TO " + el.Tcp.Client.RemoteEndPoint, ConsoleColor.DarkCyan);
+                                        ishit = el.isHit(Y, X);
+                                        if (el.isLose())
+                                        {
+                                            el.Write("LOSE");
+                                            p.Write("WIN");
+                                        }
+                                        el.Write(message + " true " + ishit.ToString().ToLower());
+                                        temp_player = el;
+
+
                                     }
                                 }
+                                p.Write("false " + ishit.ToString().ToLower());
+                                p = temp_player;
                             }
                         }
-
                     });
+
                 }
             }
         }

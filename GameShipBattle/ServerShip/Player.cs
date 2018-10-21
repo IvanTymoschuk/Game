@@ -31,8 +31,8 @@ namespace ServerShip
         public string ReadMessage()
         {
             NetworkStream str = Tcp.GetStream();
-            byte[] arr = new byte[256];
-            int bytes = str.Read(arr, 0, 256);
+            byte[] arr = new byte[1050];
+            int bytes = str.Read(arr, 0, 1050);
             return Encoding.Unicode.GetString(arr, 0, bytes);
         }
         public void SetMatrix(string str)

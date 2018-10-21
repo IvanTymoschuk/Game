@@ -241,6 +241,10 @@ namespace Client
                         "☻";
 
                 ships.Remove(lbShips.SelectedItem as Ship);
+                if(ships.Count == 0)
+                {
+                    
+                }
             }
             else
             {
