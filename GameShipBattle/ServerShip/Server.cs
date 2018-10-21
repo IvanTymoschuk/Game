@@ -78,7 +78,8 @@ namespace ServerShip
                             if (message.Contains("#matrix") == true)
                             {
                                 p.SetMatrix(message);
-                                p.PrintMatrix();
+
+                                //p.PrintMatrix();
                                 foreach (var el in Players)
                                 {
                                     if (el != p)
@@ -101,11 +102,11 @@ namespace ServerShip
                                     if (el.Tcp.Client.RemoteEndPoint != p.Tcp.Client.RemoteEndPoint)
                                     {
                                         ishit = el.isHit(Y, X);
-                                        Console.WriteLine("\t isHit = " + ishit);
                                         if (el.isLose())
                                         {
                                             el.Write("LOSE");
                                             p.Write("WIN");
+                                            Console.WriteLine(p.Tcp.Client.RemoteEndPoint + " is WIN");
                                         }
                                         if (ishit == true)
                                         {
@@ -168,7 +169,6 @@ namespace ServerShip
                 {
 
                 }
-                Console.WriteLine("\t SERVER PARSE " + coords + " TO Y:" + Y + " X:" + X);
             }
         }
         private void Print(string msg, ConsoleColor cc = ConsoleColor.White)
