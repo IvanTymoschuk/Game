@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ServerShip
@@ -13,17 +10,15 @@ namespace ServerShip
     {
         private readonly TcpListener listener;
         public List<Player> users;
-        
 
-        int X;
-        int Y;
+        private int X;
+        private int Y;
 
         public Server(string ip, int port)
         {
             // MY server location
             listener = new TcpListener(IPAddress.Parse(ip), port);
             users = new List<Player>();
-
         }
 
         public void ServerStart()
@@ -33,8 +28,6 @@ namespace ServerShip
 
             while (true)
             {
-
-
                 TcpClient client = listener.AcceptTcpClient();
                 Player u = new Player(client);
                 users.Add(u);
@@ -43,12 +36,11 @@ namespace ServerShip
                 {
                     Task.Run(() =>
                     {
-                        
                         List<Player> Players = new List<Player>();
                         foreach (Player el in users)
                             Players.Add(el);
 
-                        Player p=null;
+                        Player p = null;
 
                         users.Clear();
 
@@ -72,7 +64,6 @@ namespace ServerShip
                         bool ishit = false;
                         while (true)
                         {
-
                             message = p.ReadMessage();
 
                             if (message.Contains("#matrix") == true)
@@ -88,17 +79,15 @@ namespace ServerShip
                                         el.Write("true");
                                         p = el;
                                     }
-                                    
                                 }
                             }
                             else
                             {
                                 ParseCoords(message);
-                      
-                                Player temp_player=null;
+
+                                Player temp_player = null;
                                 foreach (var el in Players)
                                 {
-
                                     if (el.Tcp.Client.RemoteEndPoint != p.Tcp.Client.RemoteEndPoint)
                                     {
                                         ishit = el.isHit(Y, X);
@@ -117,8 +106,6 @@ namespace ServerShip
                                             el.Write(message + " true " + ishit.ToString().ToLower());
                                             temp_player = el;
                                         }
-
-
                                     }
                                 }
                                 if (ishit == true)
@@ -128,18 +115,17 @@ namespace ServerShip
                                     p.Write("false " + ishit.ToString().ToLower());
                                     p = temp_player;
                                 }
-                              
                             }
                         }
                     });
-
                 }
             }
         }
+
         private void ParseCoords(string coords)
         {
             string[] coord = coords.Split(' ');
-            if(coord[0]!=null)
+            if (coord[0] != null)
             {
                 if (coord[0] == "A")
                     Y = 0;
@@ -165,19 +151,17 @@ namespace ServerShip
                 {
                     X = Convert.ToInt32(coord[1]);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
-
                 }
             }
         }
+
         private void Print(string msg, ConsoleColor cc = ConsoleColor.White)
         {
             Console.ForegroundColor = cc;
             Console.WriteLine(msg);
             Console.ForegroundColor = ConsoleColor.White;
         }
-
-
     }
 }

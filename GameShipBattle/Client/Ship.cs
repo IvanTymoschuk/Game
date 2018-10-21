@@ -1,23 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Client
+﻿namespace Client
 {
-    class Ship
+    internal class Ship
     {
         public string Name { get; set; }
         public int Length { get; set; }
-
-
 
         public virtual string ToString()
         {
             return string.Format(Name + " | " + Length.ToString());
         }
-
-
     }
 }

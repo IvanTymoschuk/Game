@@ -14,8 +14,6 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="100"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
-
-
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -23,38 +21,29 @@
 
             <RowDefinition></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
-
         </Grid.RowDefinitions>
 
-        
-        
         <Label FontSize="30">Ships</Label>
         <ListBox Grid.Row="1" Name="lbShips" SelectionChanged="lbShips_SelectionChanged">
-            
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="5">
-                            
-                            <TextBlock FontSize="16" Text="{Binding Path=Name}" HorizontalAlignment="Center" />
-                            <TextBlock FontSize="16" Text="{Binding Path=Length}" HorizontalAlignment="Center" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-           
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+
+                        <TextBlock FontSize="16" Text="{Binding Path=Name}" HorizontalAlignment="Center" />
+                        <TextBlock FontSize="16" Text="{Binding Path=Length}" HorizontalAlignment="Center" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
         <Button Grid.Row="2" Height="50" VerticalAlignment="Top" Name="btnPush" Click="BtnPush_OnClick">Push</Button>
-        
-        
-        
+
         <Border Margin="20" Grid.Row="1" Grid.Column="1" BorderThickness="2" BorderBrush="Black">
-            <Grid  Name="UserGrid" ShowGridLines="True"/>
+            <Grid  Name="UserGrid" ShowGridLines="True" />
         </Border>
 
-        
-        
-        
         <Border Margin="20" Grid.Row="1" Grid.Column="3" BorderThickness="2" BorderBrush="Black">
-            <Grid  Name="OpponentGrid" ShowGridLines="True"/>
+            <Grid  Name="OpponentGrid" ShowGridLines="True" />
         </Border>
 
         <Label Grid.ColumnSpan="3" Grid.Column="1" HorizontalAlignment="Center" FontSize="30" Name="lblInfo">Info</Label>
@@ -62,13 +51,10 @@
         <Label Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Center" FontSize="30" >Opponent</Label>
         <Button Grid.Row="2" Grid.Column="2" Name="SEND_BTN" Click="Button_Click"  Background="Red" Foreground="AliceBlue" FontSize="30">HIT!</Button>
 
-
-
-
-<StackPanel Grid.Column="2" Grid.Row="1">
-            <TextBox ToolTip="A-Z" Name="tb1"/>
+        <StackPanel Grid.Column="2" Grid.Row="1">
+            <TextBox ToolTip="A-Z" Name="tb1" />
             <TextBox Name="tb" ToolTip="1-10" />
-            <TextBlock Name="tb3"/>
+            <TextBlock Name="tb3" />
         </StackPanel>
     </Grid>
 </Window>

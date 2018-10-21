@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Net.Sockets;
-using System.Diagnostics;
-using System.Collections.ObjectModel;
 
 namespace Client
 {
@@ -23,14 +16,15 @@ namespace Client
     /// </summary>
     public partial class MainWindow : Window
     {
-
         // Game vars
         public string X { get; set; } // X
+
         public string Y { get; set; } // Y
         public bool isHit; // is hit?
 
         //System vars
-        TcpClient client;
+        private TcpClient client;
+
         public bool Step = false;
         public bool isGameStarted = false;
 
@@ -38,12 +32,15 @@ namespace Client
 
         private int count_xp = 0;
 
-        ObservableCollection<Ship> ships;
+        private ObservableCollection<Ship> ships;
 
-        IEnumerable<Button> collectionYourButtons = null;
+        private IEnumerable<Button> collectionYourButtons = null;
 
-        Button btn = null;
+        private Button btn = null;
 
+
+        private Button Yourbtn = null;
+        private List<int> FallCels;
 
         public MainWindow()
         {
@@ -52,39 +49,33 @@ namespace Client
             UserGrid.IsEnabled = true;
             btnPush.IsEnabled = false;
 
-
             //Fill tables
             CreateTable(UserGrid);
             CreateTable(OpponentGrid);
             UserGridBtn();
 
-
             ships = new ObservableCollection<Ship>();
-
 
             #region FillShipList
 
-            ships.Add(new Ship() {Name = "ExtraLarge", Length = 4});
+            ships.Add(new Ship() { Name = "ExtraLarge", Length = 4 });
 
-            ships.Add(new Ship() {Name = "Large", Length = 3});
-            ships.Add(new Ship() {Name = "Large", Length = 3});
+            ships.Add(new Ship() { Name = "Large", Length = 3 });
+            ships.Add(new Ship() { Name = "Large", Length = 3 });
 
-            ships.Add(new Ship() {Name = "Middle", Length = 2});
-            ships.Add(new Ship() {Name = "Middle", Length = 2});
-            ships.Add(new Ship() {Name = "Middle", Length = 2});
+            ships.Add(new Ship() { Name = "Middle", Length = 2 });
+            ships.Add(new Ship() { Name = "Middle", Length = 2 });
+            ships.Add(new Ship() { Name = "Middle", Length = 2 });
 
-            ships.Add(new Ship() {Name = "Small", Length = 1});
-            ships.Add(new Ship() {Name = "Small", Length = 1});
-            ships.Add(new Ship() {Name = "Small", Length = 1});
-            ships.Add(new Ship() {Name = "Small", Length = 1});
+            ships.Add(new Ship() { Name = "Small", Length = 1 });
+            ships.Add(new Ship() { Name = "Small", Length = 1 });
+            ships.Add(new Ship() { Name = "Small", Length = 1 });
+            ships.Add(new Ship() { Name = "Small", Length = 1 });
 
-
-
-            #endregion
+            #endregion FillShipList
 
             FallCels = new List<int>();
             lbShips.ItemsSource = ships;
-
 
             //array2Da = new int[10, 10];
             try
@@ -204,7 +195,6 @@ namespace Client
                         Hit(strs[3]);
                     }
 
-
                     if (Step == true)
                     {
                         Dispatcher.Invoke(() => { SEND_BTN.IsEnabled = true; });
@@ -219,7 +209,7 @@ namespace Client
             });
         }
 
-        string getMatrix()
+        private string getMatrix()
         {
             string strMatrix = "#matrix ";
             IEnumerable<Button> collection = null;
@@ -239,7 +229,7 @@ namespace Client
             return strMatrix;
         }
 
-        void Hit(bool is_hit)
+        private void Hit(bool is_hit)
         {
             if (btn == null)
                 return;
@@ -253,7 +243,7 @@ namespace Client
             }
         }
 
-        void Hit(string is_hit)
+        private void Hit(string is_hit)
         {
             IEnumerable<Button> collection = null;
             Dispatcher.Invoke(() =>
@@ -275,9 +265,8 @@ namespace Client
         }
 
         //IEnumerable<Button> collection = null;
-        void UserGridBtn()
+        private void UserGridBtn()
         {
-
             Dispatcher.Invoke(() =>
             {
                 collectionYourButtons = UserGrid.Children.OfType<Button>();
@@ -287,31 +276,20 @@ namespace Client
             });
         }
 
-        Button Yourbtn = null;
-        private List<int> FallCels;
-
-
 
         private void UserBtn(object sender, RoutedEventArgs e)
         {
             Yourbtn = sender as Button;
 
-
-
-           
-
             if (lbShips.SelectedItem == null)
                 return;
             Ship currentShip = lbShips.SelectedItem as Ship;
-
-
-
 
             foreach (var el in FallCels)
             {
                 for (int i = 0; i < currentShip.Length; i++)
                 {
-                    if (el == collectionYourButtons.ToList().IndexOf(Yourbtn)+i)
+                    if (el == collectionYourButtons.ToList().IndexOf(Yourbtn) + i)
                     {
                         MessageBox.Show("You can`t pick ship here.Another ship fill this space");
                         return;
@@ -319,63 +297,51 @@ namespace Client
                 }
             }
 
-
-
             int currentPos = collectionYourButtons.ToList().IndexOf(Yourbtn);
 
             if (int.Parse(Yourbtn.Name[1].ToString()) + currentShip.Length < 10)
             {
                 //Yourbtn.Content = "☻";
-                
+
                 for (int j = 0; j < currentShip.Length; j++)
                 {
                     if (j == 0)
                     {
-                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) -1);
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) - 1);
                         FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) - 11);
                         FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + 11);
-
                     }
 
-
-                    collectionYourButtons.ToList()[collectionYourButtons.ToList().IndexOf(Yourbtn) + j].Content ="☻";
+                    collectionYourButtons.ToList()[collectionYourButtons.ToList().IndexOf(Yourbtn) + j].Content = "☻";
 
                     FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j);
-                    FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j+10);
+                    FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j + 10);
                     FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j - 10);
-
-
 
                     if (j == currentShip.Length - 1)
                     {
-                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn)+j - 1);
-                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) +j- 11);
-                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) +j+ 11);
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j - 1);
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j - 11);
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j + 11);
                     }
                 }
 
-
                 ships.Remove(lbShips.SelectedItem as Ship);
             }
-
             else
 
             {
                 lblInfo.Content = "Ship is too big.Here not enough space";
             }
-
         }
 
-
-
-        void CreateTable(Grid grid)
+        private void CreateTable(Grid grid)
         {
             //Definitions
             for (int i = 0; i < 11; i++)
             {
                 grid.RowDefinitions.Add(new RowDefinition());
                 grid.ColumnDefinitions.Add(new ColumnDefinition());
-
             }
 
             //Fill Header Row
@@ -386,33 +352,28 @@ namespace Client
                 Grid.SetRow(tb, 10);
                 Grid.SetColumn(tb, i);
                 grid.Children.Add(tb);
-
             }
 
             //Fill Header Column
-            char s = 'A'; 
+            char s = 'A';
             for (int i = 0; i < 10; i++)
             {
                 TextBlock tb = new TextBlock();
                 tb.Text = s.ToString();
-               
+
                 s++;
                 Grid.SetRow(tb, i);
                 Grid.SetColumn(tb, 10);
                 grid.Children.Add(tb);
-
             }
-
 
             //fill buttons
             char btn_fname = 'A';
             for (int i = 0; i < 10; i++)
             {
-
                 for (int j = 0; j < 10; j++)
                 {
                     Button bt = new Button();
-
 
                     bt.Name = string.Format($"{btn_fname}{j}");
                     bt.Content = bt.Name.ToString();
@@ -420,23 +381,19 @@ namespace Client
                     Grid.SetColumn(bt, j);
                     grid.Children.Add(bt);
                     bt.Click += Attack_click;
-                   // bt.IsEnabled = false;
+                    // bt.IsEnabled = false;
                 }
                 btn_fname++;
             }
-        
-           
+        }
 
-        }
-        private byte [] getByteFromMatrix(string str_matrix)
+        private byte[] getByteFromMatrix(string str_matrix)
         {
-           
             return Encoding.Unicode.GetBytes(str_matrix);
-            
         }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
             //
             //
             // ALL BUTTONS FROM GRID
@@ -446,10 +403,9 @@ namespace Client
 
             try
             {
-
                 if (btn != null)
                 {
-                    if(btn.IsEnabled==false)
+                    if (btn.IsEnabled == false)
                     {
                         MessageBox.Show("You have already gone here ");
                         return;
@@ -520,11 +476,12 @@ namespace Client
                 //networkStream.Write(arr, 0, arr.Length);
                 //MessageBox.Show(tb1.Text + " " + tb.Text);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 MessageBox.Show("You lost connect to server!!");
             }
         }
+
         private void Attack_click(object sender, RoutedEventArgs e)
         {
             if (btn != null)
@@ -542,10 +499,8 @@ namespace Client
             th.Top = 6;
             th.Bottom = 6;
             (sender as Button).BorderThickness = th;
-            btn= (sender as Button);
-
+            btn = (sender as Button);
         }
-
 
         private void BtnPush_OnClick(object sender, RoutedEventArgs e)
         {
@@ -559,16 +514,8 @@ namespace Client
             }
         }
 
-
-
-
         private void lbShips_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
-
-
-            }
-                
-            }
         }
-    
+    }
+}

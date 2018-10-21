@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Sockets;
-
-namespace ServerShip
+﻿namespace ServerShip
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             //Player player1 = null;
             //IPAddress localAddr = IPAddress.Parse("127.0.0.1");
@@ -19,7 +11,6 @@ namespace ServerShip
             //Console.WriteLine("Waiting for users...");
             //Task.Run(() =>
             //{
-
             //    while(true)
             //    {
             //        string str = player1.ReadMessage();
@@ -31,10 +22,8 @@ namespace ServerShip
             //    player1= new Player(server.AcceptTcpClient());
             //    Console.WriteLine(server.LocalEndpoint.ToString()+ " connected to server!");
             //}
-            Server server = new Server("127.0.0.1",1488);
+            Server server = new Server("127.0.0.1", 1488);
             server.ServerStart();
-
-
         }
     }
 }
