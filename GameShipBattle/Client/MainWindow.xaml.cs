@@ -33,14 +33,18 @@ namespace Client
         TcpClient client;
         public bool Step = false; 
         public bool isGameStarted = false;
-        public int[,] array2Da;
+
+        public bool isSendMatrix = false;
+
+        private int count_xp = 0;
+
         ObservableCollection<Ship> ships;
         public MainWindow()
         {
             InitializeComponent();
             SEND_BTN.IsEnabled = false;
             UserGrid.IsEnabled = true;
-
+            btnPush.IsEnabled = false;
      
            
             //Fill tables
@@ -58,7 +62,7 @@ namespace Client
             lbShips.ItemsSource = ships;
 
 
-            array2Da = new int[10, 10];
+            //array2Da = new int[10, 10];
             try
             {
                 client = new TcpClient();
@@ -100,7 +104,19 @@ namespace Client
                     }
                     if (msg1 == "true")
                     {
-                        Step = true;
+                        if (isSendMatrix == false)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                btnPush.IsEnabled = true;
+                            });
+                            isSendMatrix = true;
+                        }
+                        else
+                        {
+                            Step = true;
+                        }
+                       
                         if (isGameStarted == false)
                         {
                             isGameStarted = true;
@@ -108,7 +124,21 @@ namespace Client
                         }
                     }
                     else
-                    if (msg1 == "false false" || msg1 == "false true" || msg1=="false")
+                    if (msg1 == "false")
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            btnPush.IsEnabled = false;
+                        });
+                         Step = false;
+                        if (isGameStarted == false)
+                        {
+                            isGameStarted = true;
+                            MessageBox.Show("GAME STARTED!!!!");
+                        }
+                    }
+                    else
+                    if (msg1 == "false false" || msg1 == "false true")
                     {
                         if (btn != null)
                         {
@@ -168,7 +198,27 @@ namespace Client
                 }
             });
         }
-    
+        string getMatrix()
+        {
+            string strMatrix= "#matrix ";
+            IEnumerable<Button> collection = null;
+            Dispatcher.Invoke(() =>
+            {
+                collection = UserGrid.Children.OfType<Button>();
+            });
+            foreach (var el in collection)
+            {
+                if (el.Content == "☻")
+                {
+                    strMatrix += "1 ";
+                    count_xp++;
+                }
+                else
+                    strMatrix += "0 ";
+            }
+            strMatrix += count_xp;
+            return strMatrix;
+        }
         void Hit(bool is_hit)
         {
             if (btn == null)
@@ -315,14 +365,9 @@ namespace Client
            
 
         }
-        private byte [] getByteFromMatrix()
+        private byte [] getByteFromMatrix(string str_matrix)
         {
            
-            string str_matrix= "#matrix ";
-            for (int i = 0; i < 10; i++)
-                for (int j = 0; j < 10; j++)
-                    str_matrix += array2Da[i, j].ToString() + " ";
-            MessageBox.Show(str_matrix);
             return Encoding.Unicode.GetBytes(str_matrix);
             
         }
@@ -442,9 +487,12 @@ namespace Client
 
         private void BtnPush_OnClick(object sender, RoutedEventArgs e)
         {
-            if (lbShips.Items == null)
+            if (lbShips.Items.Count == 0)
             {
-                
+                NetworkStream networkStream = client.GetStream();
+                byte[] arr = Encoding.Unicode.GetBytes(getMatrix());//getByteFromMatrix(); //Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
+                networkStream.Write(arr, 0, arr.Length);
+                btnPush.IsEnabled = false;
             }
         }
 

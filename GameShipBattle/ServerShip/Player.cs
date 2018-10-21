@@ -47,6 +47,7 @@ namespace ServerShip
                     a++;
                 }
             }
+            count_xp = Convert.ToInt32(items[a]);
         }
         public bool isHit(int y, int x)
         {

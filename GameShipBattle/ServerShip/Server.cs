@@ -78,6 +78,16 @@ namespace ServerShip
                             {
                                 p.SetMatrix(message);
                                 p.PrintMatrix();
+                                foreach (var el in Players)
+                                {
+                                    if (el != p)
+                                    {
+                                        p.Write("false");
+                                        el.Write("true");
+                                        p = el;
+                                    }
+                                    
+                                }
                             }
                             else
                             {
