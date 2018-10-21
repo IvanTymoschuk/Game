@@ -116,7 +116,7 @@ namespace Client
                         {
                             Step = true;
                         }
-                       
+
                         if (isGameStarted == false)
                         {
                             isGameStarted = true;
@@ -130,11 +130,22 @@ namespace Client
                         {
                             btnPush.IsEnabled = false;
                         });
-                         Step = false;
+                        Step = false;
                         if (isGameStarted == false)
                         {
                             isGameStarted = true;
                             MessageBox.Show("GAME STARTED!!!!");
+                        }
+                    }
+                    else
+                    if (msg1 == "true true")
+                    {
+                        if (btn != null)
+                        {
+                            if (msg1 == "true true")
+                            {
+                                Hit(true);
+                            }
                         }
                     }
                     else
@@ -170,7 +181,7 @@ namespace Client
                             Step = true;
                         else
                             Step = false;
-                        
+
                         Y = strs[0];
                         X = strs[1];
                         Hit(strs[3]);
@@ -276,7 +287,11 @@ namespace Client
         private void UserBtn(object sender, RoutedEventArgs e)
         {
             Yourbtn= sender as Button;
-
+            if(Yourbtn.Content == "☻")
+            {
+                MessageBox.Show("This button used");
+                return;
+            }
             if (lbShips.SelectedItem == null)
                 return;
             Ship currentShip = lbShips.SelectedItem as Ship;
@@ -493,6 +508,7 @@ namespace Client
                 byte[] arr = Encoding.Unicode.GetBytes(getMatrix());//getByteFromMatrix(); //Encoding.Unicode.GetBytes(tb1.Text+" "+tb.Text);
                 networkStream.Write(arr, 0, arr.Length);
                 btnPush.IsEnabled = false;
+                UserGrid.IsEnabled = false;
             }
         }
 

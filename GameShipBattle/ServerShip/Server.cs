@@ -69,6 +69,7 @@ namespace ServerShip
                         }
 
                         string message = null;
+                        bool ishit = false;
                         while (true)
                         {
 
@@ -92,7 +93,7 @@ namespace ServerShip
                             else
                             {
                                 ParseCoords(message);
-                                bool ishit = false;
+                      
                                 Player temp_player=null;
                                 foreach (var el in Players)
                                 {
@@ -100,19 +101,33 @@ namespace ServerShip
                                     if (el.Tcp.Client.RemoteEndPoint != p.Tcp.Client.RemoteEndPoint)
                                     {
                                         ishit = el.isHit(Y, X);
+                                        Console.WriteLine("\t isHit = " + ishit);
                                         if (el.isLose())
                                         {
                                             el.Write("LOSE");
                                             p.Write("WIN");
                                         }
-                                        el.Write(message + " true " + ishit.ToString().ToLower());
-                                        temp_player = el;
+                                        if (ishit == true)
+                                        {
+                                            el.Write(message + " false " + ishit.ToString().ToLower());
+                                        }
+                                        if (ishit == false)
+                                        {
+                                            el.Write(message + " true " + ishit.ToString().ToLower());
+                                            temp_player = el;
+                                        }
 
 
                                     }
                                 }
-                                p.Write("false " + ishit.ToString().ToLower());
-                                p = temp_player;
+                                if (ishit == true)
+                                    p.Write("true " + ishit.ToString().ToLower());
+                                if (ishit == false)
+                                {
+                                    p.Write("false " + ishit.ToString().ToLower());
+                                    p = temp_player;
+                                }
+                              
                             }
                         }
                     });
