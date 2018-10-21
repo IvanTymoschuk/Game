@@ -23,7 +23,7 @@ namespace Client
     /// </summary>
     public partial class MainWindow : Window
     {
-        
+
         // Game vars
         public string X { get; set; } // X
         public string Y { get; set; } // Y
@@ -31,7 +31,7 @@ namespace Client
 
         //System vars
         TcpClient client;
-        public bool Step = false; 
+        public bool Step = false;
         public bool isGameStarted = false;
 
         public bool isSendMatrix = false;
@@ -39,14 +39,20 @@ namespace Client
         private int count_xp = 0;
 
         ObservableCollection<Ship> ships;
+
+        IEnumerable<Button> collectionYourButtons = null;
+
+        Button btn = null;
+
+
         public MainWindow()
         {
             InitializeComponent();
             SEND_BTN.IsEnabled = false;
             UserGrid.IsEnabled = true;
             btnPush.IsEnabled = false;
-     
-           
+
+
             //Fill tables
             CreateTable(UserGrid);
             CreateTable(OpponentGrid);
@@ -55,10 +61,28 @@ namespace Client
 
             ships = new ObservableCollection<Ship>();
 
-            ships.Add(new Ship(){Name ="Large",Length=4});
-            ships.Add(new Ship() { Name = "Small", Length = 1 });
-            ships.Add(new Ship() { Name = "Middle", Length = 2 });
 
+            #region FillShipList
+
+            ships.Add(new Ship() {Name = "ExtraLarge", Length = 4});
+
+            ships.Add(new Ship() {Name = "Large", Length = 3});
+            ships.Add(new Ship() {Name = "Large", Length = 3});
+
+            ships.Add(new Ship() {Name = "Middle", Length = 2});
+            ships.Add(new Ship() {Name = "Middle", Length = 2});
+            ships.Add(new Ship() {Name = "Middle", Length = 2});
+
+            ships.Add(new Ship() {Name = "Small", Length = 1});
+            ships.Add(new Ship() {Name = "Small", Length = 1});
+            ships.Add(new Ship() {Name = "Small", Length = 1});
+            ships.Add(new Ship() {Name = "Small", Length = 1});
+
+
+
+            #endregion
+
+            FallCels = new List<int>();
             lbShips.ItemsSource = ships;
 
 
@@ -69,7 +93,7 @@ namespace Client
                 client.Connect("127.0.0.1", 1488);
                 tb3.Text = "Waiting for users";
             }
-            catch(Exception exp)
+            catch (Exception exp)
             {
                 MessageBox.Show("Server is disabled!!!");
                 this.Close();
@@ -93,6 +117,7 @@ namespace Client
                             this.Close();
                         });
                     }
+
                     if (msg1 == "LOSE")
                     {
                         MessageBox.Show("You LOSE");
@@ -102,14 +127,12 @@ namespace Client
                             this.Close();
                         });
                     }
+
                     if (msg1 == "true")
                     {
                         if (isSendMatrix == false)
                         {
-                            Dispatcher.Invoke(() =>
-                            {
-                                btnPush.IsEnabled = true;
-                            });
+                            Dispatcher.Invoke(() => { btnPush.IsEnabled = true; });
                             isSendMatrix = true;
                         }
                         else
@@ -123,13 +146,9 @@ namespace Client
                             MessageBox.Show("GAME STARTED!!!!");
                         }
                     }
-                    else
-                    if (msg1 == "false")
+                    else if (msg1 == "false")
                     {
-                        Dispatcher.Invoke(() =>
-                        {
-                            btnPush.IsEnabled = false;
-                        });
+                        Dispatcher.Invoke(() => { btnPush.IsEnabled = false; });
                         Step = false;
                         if (isGameStarted == false)
                         {
@@ -137,8 +156,7 @@ namespace Client
                             MessageBox.Show("GAME STARTED!!!!");
                         }
                     }
-                    else
-                    if (msg1 == "true true")
+                    else if (msg1 == "true true")
                     {
                         if (btn != null)
                         {
@@ -148,8 +166,7 @@ namespace Client
                             }
                         }
                     }
-                    else
-                    if (msg1 == "false false" || msg1 == "false true")
+                    else if (msg1 == "false false" || msg1 == "false true")
                     {
                         if (btn != null)
                         {
@@ -157,12 +174,12 @@ namespace Client
                             {
                                 Hit(true);
                             }
-                            else
-                            if (msg1 == "false false")
+                            else if (msg1 == "false false")
                             {
                                 Hit(false);
                             }
                         }
+
                         Step = false;
                         if (isGameStarted == false)
                         {
@@ -190,33 +207,23 @@ namespace Client
 
                     if (Step == true)
                     {
-                        Dispatcher.Invoke(() =>
-                        {
-                            SEND_BTN.IsEnabled = true;
-                        });
+                        Dispatcher.Invoke(() => { SEND_BTN.IsEnabled = true; });
                     }
                     else
                     {
-                        Dispatcher.Invoke(() =>
-                        {
-                            SEND_BTN.IsEnabled = false;
-                        });
+                        Dispatcher.Invoke(() => { SEND_BTN.IsEnabled = false; });
                     }
-                    Dispatcher.Invoke(() =>
-                    {
-                        tb3.Text = Y+X;
-                    });
+
+                    Dispatcher.Invoke(() => { tb3.Text = Y + X; });
                 }
             });
         }
+
         string getMatrix()
         {
-            string strMatrix= "#matrix ";
+            string strMatrix = "#matrix ";
             IEnumerable<Button> collection = null;
-            Dispatcher.Invoke(() =>
-            {
-                collection = UserGrid.Children.OfType<Button>();
-            });
+            Dispatcher.Invoke(() => { collection = UserGrid.Children.OfType<Button>(); });
             foreach (var el in collection)
             {
                 if (el.Content == "☻")
@@ -227,53 +234,50 @@ namespace Client
                 else
                     strMatrix += "0 ";
             }
+
             strMatrix += count_xp;
             return strMatrix;
         }
+
         void Hit(bool is_hit)
         {
             if (btn == null)
                 return;
-            if(is_hit==true)
+            if (is_hit == true)
             {
-                Dispatcher.Invoke(() =>
-                {
-                    btn.Content = "X";
-                });
+                Dispatcher.Invoke(() => { btn.Content = "X"; });
             }
             else
             {
-                Dispatcher.Invoke(() =>
-                {
-                    btn.Content = "0";
-                });
+                Dispatcher.Invoke(() => { btn.Content = "0"; });
             }
         }
+
         void Hit(string is_hit)
         {
             IEnumerable<Button> collection = null;
             Dispatcher.Invoke(() =>
             {
-                 collection = UserGrid.Children.OfType<Button>();
-           
-            foreach (var el in collection)
-                if (el.Name == Y + X)
-                {
-                    //MessageBox.Show("EL");
-                    Dispatcher.Invoke(() =>
+                collection = UserGrid.Children.OfType<Button>();
+
+                foreach (var el in collection)
+                    if (el.Name == Y + X)
                     {
-                        el.IsEnabled = false;
-                        el.FontSize = 30;
-                        el.Content = ".";
-                    });
-                }
+                        //MessageBox.Show("EL");
+                        Dispatcher.Invoke(() =>
+                        {
+                            el.IsEnabled = false;
+                            el.FontSize = 30;
+                            el.Content = ".";
+                        });
+                    }
             });
         }
+
         //IEnumerable<Button> collection = null;
-        IEnumerable<Button> collectionYourButtons = null;
         void UserGridBtn()
         {
-            
+
             Dispatcher.Invoke(() =>
             {
                 collectionYourButtons = UserGrid.Children.OfType<Button>();
@@ -282,36 +286,80 @@ namespace Client
                     el.Click += UserBtn;
             });
         }
-        
+
         Button Yourbtn = null;
+        private List<int> FallCels;
+
+
+
         private void UserBtn(object sender, RoutedEventArgs e)
         {
-            Yourbtn= sender as Button;
-            if(Yourbtn.Content == "☻")
-            {
-                MessageBox.Show("This button used");
-                return;
-            }
+            Yourbtn = sender as Button;
+
+
+
+           
+
             if (lbShips.SelectedItem == null)
                 return;
             Ship currentShip = lbShips.SelectedItem as Ship;
 
-            int currentPos = collectionYourButtons.ToList().IndexOf(Yourbtn);
-           
-            if (int.Parse(Yourbtn.Name[1].ToString()) + currentShip.Length <10)
-            {
-                Yourbtn.Content = "☻";
-                for (int j = 0; j < currentShip.Length; j++)
-                    collectionYourButtons.ToList()[collectionYourButtons.ToList().IndexOf(Yourbtn) + j ].Content =
-                        "☻";
 
-                ships.Remove(lbShips.SelectedItem as Ship);
-                if(ships.Count == 0)
+
+
+            foreach (var el in FallCels)
+            {
+                for (int i = 0; i < currentShip.Length; i++)
                 {
-                    
+                    if (el == collectionYourButtons.ToList().IndexOf(Yourbtn)+i)
+                    {
+                        MessageBox.Show("You can`t pick ship here.Another ship fill this space");
+                        return;
+                    }
                 }
             }
+
+
+
+            int currentPos = collectionYourButtons.ToList().IndexOf(Yourbtn);
+
+            if (int.Parse(Yourbtn.Name[1].ToString()) + currentShip.Length < 10)
+            {
+                //Yourbtn.Content = "☻";
+                
+                for (int j = 0; j < currentShip.Length; j++)
+                {
+                    if (j == 0)
+                    {
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) -1);
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) - 11);
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + 11);
+
+                    }
+
+
+                    collectionYourButtons.ToList()[collectionYourButtons.ToList().IndexOf(Yourbtn) + j].Content ="☻";
+
+                    FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j);
+                    FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j+10);
+                    FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) + j - 10);
+
+
+
+                    if (j == currentShip.Length - 1)
+                    {
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn)+j - 1);
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) +j- 11);
+                        FallCels.Add(collectionYourButtons.ToList().IndexOf(Yourbtn) +j+ 11);
+                    }
+                }
+
+
+                ships.Remove(lbShips.SelectedItem as Ship);
+            }
+
             else
+
             {
                 lblInfo.Content = "Ship is too big.Here not enough space";
             }
@@ -477,7 +525,6 @@ namespace Client
                 MessageBox.Show("You lost connect to server!!");
             }
         }
-        Button btn = null;
         private void Attack_click(object sender, RoutedEventArgs e)
         {
             if (btn != null)
